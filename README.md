@@ -46,23 +46,26 @@ Windows CE has code for FAT12/16/32 and exFAT. We typically build for FAT32, whi
 
 I. Building BSECT
 -----------------
-1. Go to C:\WINCE600\PLATFORM\ETX_2740\SRC\BOOTLOADER\BIOSLOADER\BOOTSECTOR\FAT32
-2. Run from Release build window 'build2.bat'
+1. Go to C:\WINCE600\PLATFORM\{YOUR_BSP}\SRC\BOOTLOADER\BIOSLOADER\BOOTSECTOR\FAT32
+2. Run from Release build window 'build.bat'
 3. This builds a FAT32 compatible partition bootloader.
 4. The result is BSECT.IMG, a binary image of 512 bytes.
 
+Tips: need 16bits ML and Link (MASM)
+ref. http://www.masm32.com/
+
 II. Building BLDR
 -----------------
-1. Go to C:\WINCE600\PLATFORM\ETX_2740\SRC\BOOTLOADER\BIOSLOADER\INIPARSER
+1. Go to C:\WINCE600\PLATFORM\{YOUR_BSP}\SRC\BOOTLOADER\BIOSLOADER\INIPARSER
 2. Run from Release build window 'build -c'. It is important to build the Release version to fit in 64k memory.
-3. Go to C:\WINCE600\PLATFORM\ETX_2740\SRC\BOOTLOADER\BIOSLOADER\LOADER\FIXED
+3. Go to C:\WINCE600\PLATFORM\{YOUR_BSP}\SRC\BOOTLOADER\BIOSLOADER\LOADER\FIXED
 4. Run from Release build window 'build -c'. It is important to build the Release version to fit in 64k memory.
-5. Go to C:\WINCE600\PLATFORM\ETX_2740\SRC\BOOTLOADER\BIOSLOADER\LOADER\FIXED\FAT32
-6. Run from Release build window 'makebldr2.bat'
+5. Go to C:\WINCE600\PLATFORM\{YOUR_BSP}\SRC\BOOTLOADER\BIOSLOADER\LOADER\FIXED\FAT32
+6. Run from Release build window 'makebldr.bat'
 7. The result is BLDR, a binary image of 24k bytes that runs in 64k memory space.
-   'makebldr2.bat' uses the 'build' tool that can only work in 32bit Windows and cannot be run from a full path 
+   'makebldr.bat' uses the 'build' tool that can only work in 32bit Windows and cannot be run from a full path 
    with more than 64 characters. If so, copy the contents of FIXED\FAT32 folder to a folder with less characters
-   before executing 'makebldr2.bat'
+   before executing 'makebldr.bat'
    
  III. Creating bootable disk
  ---------------------------
