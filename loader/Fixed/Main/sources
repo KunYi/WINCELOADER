@@ -1,0 +1,66 @@
+!if 0
+Copyright (c) Microsoft Corporation.  All rights reserved.
+!endif
+!if 0
+Use of this sample source code is subject to the terms of the Microsoft
+license agreement under which you licensed this sample source code. If
+you did not accept the terms of the license agreement, you are not
+authorized to use this sample source code. For the terms of the license,
+please see the license agreement between you and Microsoft or, if applicable,
+see the LICENSE.RTF on your install media or the root of your tools installation.
+THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES OR INDEMNITIES.
+!endif
+
+TARGETNAME=bldr
+TARGETTYPE=LIBRARY
+
+LDEFINES=$(LDEFINES) /FIXED:NO
+
+SAFESEH=
+
+NOLIBC=1
+
+ERRORFORBANNEDAPIS=
+
+#
+# Debug output options:
+#
+# Use -DSHIP_BUILD for no debug messages (smallest BLDR binary)
+# Use -DDEBUG for debug output using error/warning codes
+# Use -DDEBUG -DFULLMESSAGES for full debug string
+# Use -DDEBUG -DFULLMESSAGES -DFULLINT13MESSAGES for full disk-errror messages (biggest BLDR binary)
+#
+DEBUG_OPTIONS=-DDEBUG
+
+#
+# Compression method options (one and only one option can be specified):
+# 
+# Use -DNO_COMPRESSION for disabling compression support (smallest BLDR binary)
+# Use -DCECOMPRESSION for compression support (bigger BLDR)
+#
+COMPRESSION_OPTIONS=-DCECOMPRESSION
+
+CDEFINES=$(CDEFINES) -DCEDDK_USEDDKMACRO $(DEBUG_OPTIONS) $(COMPRESSION_OPTIONS)
+
+INCLUDES=$(_WINCEROOT)\platform\common\src\soc\x86_ms_v1\inc; \
+         $(_PUBLICROOT)\common\sdk\inc;\
+         $(_PUBLICROOT)\common\ddk\inc;\
+         $(_PUBLICROOT)\common\oak\inc;\
+         ..\..\..\iniparser; \
+         ..\..\..\utilities\bincompress;\
+         ..\inc;\
+         $(INCLUDES)
+
+SOURCES= startup.asm \
+         bios.asm    \
+         debug.c     \
+         main.c      \
+         format.c    \
+         drive.c     \
+         ini.c \
+         video.c \
+         splash.c \
+         decoder.c
+
+
+#WINCETARGETFILES=MakeImage

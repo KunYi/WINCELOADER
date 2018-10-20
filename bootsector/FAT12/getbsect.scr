@@ -1,0 +1,7 @@
+rcx
+1C2
+rbx
+0
+n bsect.img
+w fa3e
+q

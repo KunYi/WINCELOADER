@@ -1,0 +1,60 @@
+;
+; Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;
+; Use of this sample source code is subject to the terms of the Microsoft
+; license agreement under which you licensed this sample source code. If
+; you did not accept the terms of the license agreement, you are not
+; authorized to use this sample source code. For the terms of the license,
+; please see the license agreement between you and Microsoft or, if applicable,
+; see the LICENSE.RTF on your install media or the root of your tools installation.
+; THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES OR INDEMNITIES.
+;
+;******************************************************************************
+; TITLE:        BOOT.BIB
+;
+;
+; Windows CE BIOS Bootloader Source Module
+;
+;******************************************************************************
+
+MEMORY
+;
+;   The text address (0x1000) is dictated by the boot sector code which 
+;       loads this image at 0000:1000h.  All addresses should be under 64KB to 
+;       be compatible with x86 real-mode.
+;
+;   Name    Start      Size      Type
+;   ------- --------  --------   ----
+    BLDR    00001000  00005000   RAMIMAGE    ; Size should be evenly divisible by 512b.
+    BPB     00007C00  00000070   RESERVED    ; BIOS parameter block data and DPT.
+    VESA    00008000  00001000   RESERVED    ; VESA work RAM.
+;   RAM     00009000  00001900   RAM
+;   SCACHE  0000A900  00000200   RESERVED    ; Sector cache.
+;   STACK   0000AB00  00001500   RESERVED    ; Stack base will be set to 0x7FFC to leave 0x8000 free.
+    RAM     00009000  00002200   RAM
+    SCACHE  0000B200  00000200   RESERVED    ; This is where the FAT sector chains are read.
+    STACK   0000B400  00001500   RESERVED    ; The SP is set in Startup.asm.
+    READBUF 0000C900  00003700   RESERVED    ; Data from disk is read into this buffer first.
+    
+CONFIG
+
+        ; Autosize image to convert any unused RAMIMAGE area to RAM area
+    AUTOSIZE=OFF
+        ; Don't compress writable sections
+    COMPRESSION=OFF
+        ; Don't include profiling information
+    PROFILE=OFF
+        ; Move kernel-writable sections to start of RAM
+    KERNELFIXUPS=ON
+        ; ROM info
+    ROMSTART=00001000
+    ROMSIZE=05000
+    ROMWIDTH=32
+    ROMOFFSET=0
+
+MODULES
+;
+;   Name            Path                                            Memory Type
+;   --------------  ----------------------------------------------  -----------
+    nk.exe          $(SG_OUTPUT_ROOT)\platform\$(_TGTPLAT)\target\$(_TGTCPU)\$(WINCEDEBUG)\bldr_fat16.exe                                                                         BLDR
