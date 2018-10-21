@@ -453,8 +453,8 @@ BOOL FSPreHook(void)
     CHAR* Sector = (CHAR*)RW_BUFFER_START;
     SFILEINFO sFileInfo = { 0 };
 
-	if (DirLBA == 0) // for normal
-		return TRUE;
+    if (DirLBA == 0) // for normal
+        return TRUE;
 
     DirLBA = findDirDocuments();
     if (!DirLBA)
@@ -496,7 +496,7 @@ ULONG FSOpenFile(char* pFileName)
     {
         USHORT j = 0;
         i++;
-        for (j=0 ; i < 12 && *(pFileName + i) != '\0' ; i++, j++)
+        for ( ; i < 12 && *(pFileName + i) != '\0' ; i++, j++)
             FileName[8 + j] = TO_UPPER(*(pFileName + i));
     }
 
@@ -513,6 +513,12 @@ ULONG FSOpenFile(char* pFileName)
         // Try to find the specified file in the root directory
         for (pDirEntry = (PDIRENTRY)Sector, i = 0 ; i < (pBPB->BytesPerSect / sizeof(DIRENTRY)) ; i++, pDirEntry++)
         {
+            if (pDirEntry->FileName[0] == 0) // end of direntry
+            {
+                WARNMSG(MSG_FILE_NOT_FOUND, ("File '%s' not found\n", pFileName));
+                return(0);
+            }
+
             if (!memcmp(FileName, pDirEntry->FileName, 11))
             {
                 ULONG FirstClust = (pDirEntry->FirstClustH << 16) + pDirEntry->FirstClustL;
