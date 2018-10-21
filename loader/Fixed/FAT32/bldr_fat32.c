@@ -346,7 +346,7 @@ static ULONG findDirDocuments(void)
 
                 // for avoid error entry
                 // MAX_PATH(260)/13 == 20
-                if (pDirEntry32->Order >= (LAST_LFN_FLAG + 20))
+                if (sno > 20)
                     continue;
 
                 if (sno == 2)
@@ -401,7 +401,7 @@ static void DelDefaultVol(ULONG DirLBA, PSFILEINFO sfInfo)
             if (!(pDirEntry->FileName[0] | pDirEntry->FATTr))
                 break;
 
-            if ((pDirEntry->FATTr  & ATTR_MASK) == ATTR_LFN)
+            if ((pDirEntry->FATTr & ATTR_MASK) == ATTR_LFN)
             {
                 UCHAR sno = pDirEntry32->Order ^ LAST_LFN_FLAG;;
                 pDirEntry32 = (PDIRENTRY32)pDirEntry;
@@ -478,7 +478,6 @@ BOOL FSPreHook(void)
 ULONG FSOpenFile(char* pFileName)
 {
     USHORT i = 0;
-    USHORT j = 0;
     BOOL bFound = FALSE;
     ULONG DirLBA = 0;
     CHAR* Sector = (CHAR*)RW_BUFFER_START;
@@ -495,6 +494,7 @@ ULONG FSOpenFile(char* pFileName)
     
     if (*(pFileName + i) == '.')
     {
+        USHORT j = 0;
         i++;
         for (j=0 ; i < 12 && *(pFileName + i) != '\0' ; i++, j++)
             FileName[8 + j] = TO_UPPER(*(pFileName + i));
@@ -503,8 +503,6 @@ ULONG FSOpenFile(char* pFileName)
     // Look for the filename in directory list.
     for( DirLBA = g_FATParms.RootDirLBA; !bFound && DirLBA ; DirLBA = NextSector( DirLBA ) )
     {
-        //SERPRINT("Reading root directory sector (LBA=0x%x)...\r\n", DirLBA);
-
         // Read a sector from the root directory.
         if (!ReadSectors(pBPB->DriveId, DirLBA, 1, Sector))
         {
@@ -513,67 +511,26 @@ ULONG FSOpenFile(char* pFileName)
         }
 
         // Try to find the specified file in the root directory
-        for (pDirEntry = (PDIRENTRY)Sector, j = 0 ; j < (pBPB->BytesPerSect / sizeof(DIRENTRY)) ; j++, pDirEntry++)
+        for (pDirEntry = (PDIRENTRY)Sector, i = 0 ; i < (pBPB->BytesPerSect / sizeof(DIRENTRY)) ; i++, pDirEntry++)
         {
-            //SERPRINT("  %d 0x%x %c%c%c%c%c%c%c%c . %c%c%c\r\n", j, pDirEntry->FATTr
-            //                          , pDirEntry->FileName[0], pDirEntry->FileName[1], pDirEntry->FileName[2], pDirEntry->FileName[3]
-            //                          , pDirEntry->FileName[4], pDirEntry->FileName[5], pDirEntry->FileName[6], pDirEntry->FileName[7]
-            //                          , pDirEntry->FileName[8], pDirEntry->FileName[9], pDirEntry->FileName[10]);
             if (!memcmp(FileName, pDirEntry->FileName, 11))
             {
-                // Found it.
-                bFound = TRUE;
-                goto Found;
+                ULONG FirstClust = (pDirEntry->FirstClustH << 16) + pDirEntry->FirstClustL;
+                g_FileInfo.FileSize            = pDirEntry->FileSize;
+                g_FileInfo.FirstCluster        = FirstClust;
+                g_FileInfo.CurCluster          = FirstClust;
+                g_FileInfo.NumContigClusters   = 0;
+                g_FileInfo.pCurReadBuffAddr    = g_pReadBuffStart;
+                g_FileInfo.NumReadBuffBytes    = 0;
+                INFOMSG(MSG_FILE_FOUND, ("Found file '%s' (start=0x%x size=0x%x)\n",
+                    pFileName, FirstClust, pDirEntry->FileSize));
+                return (g_FileInfo.FileSize);
             }
         }
-Found:
-;
-        if (bFound)
-        {
-            //
-            // If we don't break here then NextSector will run and, through 
-            // a call to ReadSectors, overwrite our buffer and we'll return an
-            // invalid size and sector to read from.
-            //
-            break;
-        }
-    } 
-
-    if (!bFound || pDirEntry == NULL)
-    {
-        WARNMSG(MSG_FILE_NOT_FOUND, ("File '%s' not found\n", pFileName)); 
-        return(0);
     }
-    else
-    {
-        ULONG FirstClust = (pDirEntry->FirstClustH << 16) + pDirEntry->FirstClustL;
-        INFOMSG(MSG_FILE_FOUND, ("Found file '%s' (start=0x%x size=0x%x)\n", pFileName, FirstClust, pDirEntry->FileSize)); 
-    }
-   
-    //
-    // Save file parameters
-    //
-    {
-        ULONG FirstClust = (pDirEntry->FirstClustH << 16) + pDirEntry->FirstClustL;
 
-        g_FileInfo.FileSize            = pDirEntry->FileSize;
-        g_FileInfo.FirstCluster        = FirstClust;
-        g_FileInfo.CurCluster          = FirstClust;
-        g_FileInfo.NumContigClusters   = 0;
-        g_FileInfo.pCurReadBuffAddr    = g_pReadBuffStart;
-        g_FileInfo.NumReadBuffBytes    = 0;
-
-    }
-/*
-    if (bMonitorLoadProgress)
-    {
-        dwBytesToLoad = g_FileInfo.FileSize;
-        dwBytesLoaded = 0;
-        SetProgressValue(0);
-    }
-*/
-
-    return(g_FileInfo.FileSize);
+    WARNMSG(MSG_FILE_NOT_FOUND, ("File '%s' not found\n", pFileName));
+    return(0);
 }
 
 
@@ -581,7 +538,6 @@ Found:
 void FSCloseFile(void)
 {
     memset(&g_FileInfo, 0, sizeof(g_FileInfo));
-
     return;
 }
 
@@ -746,7 +702,6 @@ BOOL FSReadFile( unsigned char * pAddress, ULONG Length)
                 pAddress += g_FileInfo.NumReadBuffBytes;
             }
         }
-
     
         //
         // Load the entire read buffer with more data.
@@ -798,7 +753,6 @@ BOOL FSReadFile( unsigned char * pAddress, ULONG Length)
             // We are pointing at new cluster, need this info for large cluster mode
             g_SectorsInCurrentClusterLeftToRead = pBPB->SectsPerClust;
         }
-
 
         // Get logical block of start of the current cluster
         CurrentLBA = Cluster2LBA(g_FileInfo.CurCluster);
