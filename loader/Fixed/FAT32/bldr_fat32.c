@@ -136,7 +136,15 @@ static void UpdateFSInfo(ULONG Cluster, ULONG NumCluster)
     if (0xFFFFFFFF == pFSInfo->FreeCount)
         return;
 
-    pFSInfo->FreeCount += NumCluster;
+    /* 
+	 * remove to add FreeCount then update it
+	 * because verify on device
+	 * the result incorrect
+	 *
+	 * pFSInfo->FreeCount += NumCluster; 
+	 *
+	 */
+
     pFSInfo->NextFreeCluster = Cluster;
     WriteSector(pBPB->DriveId, g_FATParms.FsInfoLBA, (PUCHAR)pFSInfo);
 }
