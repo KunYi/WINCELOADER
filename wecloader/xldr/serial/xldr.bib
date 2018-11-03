@@ -1,0 +1,40 @@
+;
+; Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;
+; Use of this sample source code is subject to the terms of the Microsoft
+; license agreement under which you licensed this sample source code. If
+; you did not accept the terms of the license agreement, you are not
+; authorized to use this sample source code. For the terms of the license,
+; please see the license agreement between you and Microsoft or, if applicable,
+; see the LICENSE.RTF on your install media or the root of your tools installation.
+; THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES OR INDEMNITIES.
+;
+;-------------------------------------------------------------------------------
+
+MEMORY
+
+;   Name      Start     Size      Type
+;   -------   --------  --------  ----
+    XLDRS     00001000  00005000  RAMIMAGE
+    RAM       00009000  00002200  RAM
+    STACK     0000B400  00001500  RESERVED
+    BOOTSEC   0000FA00  00000200  RESERVED
+    BUFFER    0000FC00  00000300  RESERVED
+
+CONFIG
+
+    AUTOSIZE=OFF
+    COMPRESSION=OFF
+    PROFILE=OFF
+    KERNELFIXUPS=ON
+
+    ROMSTART=00001000
+    ROMSIZE=00005000
+    ROMWIDTH=32
+
+MODULES
+; Name      Path                                                                                     Memory   Flags
+; --------  ---------------------------------------------------------------------------------------  -------  ------
+  nk.exe    $(SG_OUTPUT_ROOT)\platform\$(_TGTPLAT)\target\$(_TGTCPU)\$(WINCEDEBUG)\xldrS.exe  xldrS
+
