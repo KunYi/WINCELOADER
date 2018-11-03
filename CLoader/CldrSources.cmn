@@ -1,0 +1,6 @@
+
+#make up for not having PLATLIB var in CE 6 build env.
+!IF "$(_WINCEOSVER)"=="600"
+_PLATLIB=$(_TARGETPLATROOT)\lib
+!ENDIF
+

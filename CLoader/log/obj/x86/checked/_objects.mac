@@ -1,0 +1,8 @@
+OBJECTS=\
+    obj\x86\checked\format.obj\
+    obj\x86\checked\log.obj\
+    obj\x86\checked\dump.obj\
+    obj\x86\checked\oallog.obj\
+    obj\x86\checked\debuglog.obj\
+    obj\x86\checked\kitllog.obj
+

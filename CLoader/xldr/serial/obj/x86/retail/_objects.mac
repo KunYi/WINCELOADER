@@ -1,0 +1,7 @@
+OBJECTS=\
+    obj\x86\retail\log.obj\
+    obj\x86\retail\startup.obj\
+    obj\x86\retail\bios.obj\
+    obj\x86\retail\filesystem.obj\
+    obj\x86\retail\xldr.obj
+
