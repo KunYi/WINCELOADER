@@ -37,31 +37,31 @@ LOAD_ADDRESS   EQU 1000H   ; Boot loader load address.
     ; boot sector is written to the storage device, we'll leave the BIOS parameter block
     ; in tact.
     ;
-    ;                                            Size
-                        ;       0   3
-    VerId           db  'WINDOWCE'  ; 7C03  3   8
-    BytePerSect     dw  0000        ; 7C0B  11  2
-    SectPerClust    db  00      ; 7C0D  13  1
-    RsvdSects       dw  0000        ; 7C0E  14  2
-    NumFATs         db  00      ; 7C10  16  1
-    Num32bEntry     dw  0000        ; 7C11  17  2
-    SectPerPart     dw  0000        ; 7C13  19  2
-    MediaDesc       db  00      ; 7C15  21  1
-    SectPerFAT      dw  0000        ; 7C16  22  2
-    SectPerTrack    dw  0000        ; 7C18  24  2
-    NumHeads        dw  0000        ; 7C1A  26  2
-    NumHiddenSectL  dw  0000        ; 7C1C  28  2
-    NumHiddenSectH  dw  0000        ; 7C1E  30  2
-    TotalSectorsL   dw  0000        ; 7C20  32  2
-    TotalSectorsH   dw  0000        ; 7C22  34  2
-    DriveId         db  00      ; 7C24  36  1
-    TempVal         db  00      ; 7C25  37  1
-    ExtRecordSig    db  00      ; 7C26  38  1
-    VolSerNumL      dw  0000        ; 7C27  39  2
-    VolSerNumH      dw  0000        ; 7C29  41  2
-    VolLabel        db  '           '   ; 7C2B  43  11
-    TypeFAT         db  '        '  ; 7C36  54  8
-                        ;       62
+    ;                                           Offset  Size
+    ;                                           0       3
+    VerId           db  'WINDOWCE'      ; 7C03  3       8
+    BytePerSect     dw  0000            ; 7C0B  11      2
+    SectPerClust    db  00              ; 7C0D  13      1
+    RsvdSects       dw  0000            ; 7C0E  14      2
+    NumFATs         db  00              ; 7C10  16      1
+    Num32bEntry     dw  0000            ; 7C11  17      2
+    SectPerPart     dw  0000            ; 7C13  19      2
+    MediaDesc       db  00              ; 7C15  21      1
+    SectPerFAT      dw  0000            ; 7C16  22      2
+    SectPerTrack    dw  0000            ; 7C18  24      2
+    NumHeads        dw  0000            ; 7C1A  26      2
+    NumHiddenSectL  dw  0000            ; 7C1C  28      2
+    NumHiddenSectH  dw  0000            ; 7C1E  30      2
+    TotalSectorsL   dw  0000            ; 7C20  32      2
+    TotalSectorsH   dw  0000            ; 7C22  34      2
+    DriveId         db  00              ; 7C24  36      1
+    TempVal         db  00              ; 7C25  37      1
+    ExtRecordSig    db  00              ; 7C26  38      1
+    VolSerNumL      dw  0000            ; 7C27  39      2
+    VolSerNumH      dw  0000            ; 7C29  41      2
+    VolLabel        db  '           '   ; 7C2B  43      11
+    TypeFAT         db  'FAT16   '      ; 7C36  54      8
+                                        ;       62
 
 ;
 ; So the size of the file should be SECTOR_SIZE - 62.  This will be 450
