@@ -1,17 +1,15 @@
-
 [bits 16]
 [org 0xFA00]
-
-STACK_START EQU 0FA00H  ; Starting location of stack.
-INT1E_VECTOR    EQU 0078H   ; INT 01Eh vector location.
-READ_LENGTH EQU     68  ; Number size of bootloader image in sectors.
-LOAD_ADDRESS    EQU     1000H   ; Boot loader load address.
-
 ;
 ; Even though we declare 0xFA00 as a starting address, the BIOS will
 ; load us at 0x7C00. But just at the beginning of our code, we'll 
 ; copy ourselves to 0xFA00 and jump in the right place.
 ;
+
+STACK_START     EQU 0FA00H  ; Starting location of stack.
+INT1E_VECTOR    EQU 0078H   ; INT 01Eh vector location.
+READ_LENGTH     EQU 68      ; Number size of bootloader image in sectors.
+LOAD_ADDRESS    EQU 1000H   ; Boot loader load address.
 
 ;
 ; This file contains the boot sector code for the Windows CE BIOS bootloader.
@@ -40,39 +38,39 @@ LOAD_ADDRESS    EQU     1000H   ; Boot loader load address.
     ; in tact.
     ;
     ;                                           Offset  Size
-    ;                                           0   3
-    VerId           db  'WINDOWCE'  ; 7C03  3       8
-    BytePerSect     dw  0000        ; 7C0B  11  2
-    SectPerClust    db  00      ; 7C0D  13  1
-    RsvdSects       dw  0000        ; 7C0E  14  2
-    NumFATs         db  00      ; 7C10  16  1
-    Num32bEntry     dw  0000        ; 7C11  17  2
-    SectPerPart     dw  0000        ; 7C13  19  2
-    MediaDesc       db  00      ; 7C15  21  1
-    SectPerFAT      dw  0000        ; 7C16  22  2
-    SectPerTrack    dw  0000        ; 7C18  24  2
-    NumHeads        dw  0000        ; 7C1A  26  2
-    NumHiddenSectL  dw  0000        ; 7C1C  28  4
-    NumHiddenSectH  dw  0000        ; 7C1E  
-    TotalSectorsL   dw  0000        ; 7C20  32  4
-    TotalSectorsH   dw  0000        ; 7C22
-    SectPerFATL     dw  0000        ; 7C24  36  4
-    SectPerFATH     dw  0000        ; 7C26
-    FAT32Flags      dw  0000        ; 7C28  40      2
-    FSVersion       dw  0000        ; 7C2A  42      2
-    FirstClusterL   dw  0000        ; 7C2C  44      4
-    FirstClusterH   dw  0000        ; 7C2E
-    FSInfo          dw  0000        ; 7C30  48  2
-    BackupBootSect  dw  0000        ; 7C32  50  2
-    Reserved        db  '            '  ; 7C34  52  12
-    DriveId         db  00      ; 7C40  64  1
-    Reserved1       db  00      ; 7C41  65  1
-    ExtRecordSig    db  00      ; 7C42  66  1
-    VolSerNumL      dw  0000        ; 7C43  67  4
-    VolSerNumH      dw  0000        ; 7C45  
-    VolLabel        db  '           '   ; 7C47  71  11
-    TypeFAT         db  '        '  ; 7C52  82  8
-                        ;               90
+    ;                                           0       3
+    VerId           db  'WINDOWCE'      ; 7C03  3       8
+    BytePerSect     dw  0000            ; 7C0B  11      2
+    SectPerClust    db  00              ; 7C0D  13      1
+    RsvdSects       dw  0000            ; 7C0E  14      2
+    NumFATs         db  00              ; 7C10  16      1
+    Num32bEntry     dw  0000            ; 7C11  17      2
+    SectPerPart     dw  0000            ; 7C13  19      2
+    MediaDesc       db  00              ; 7C15  21      1
+    SectPerFAT      dw  0000            ; 7C16  22      2
+    SectPerTrack    dw  0000            ; 7C18  24      2
+    NumHeads        dw  0000            ; 7C1A  26      2
+    NumHiddenSectL  dw  0000            ; 7C1C  28      2
+    NumHiddenSectH  dw  0000            ; 7C1E  30      2
+    TotalSectorsL   dw  0000            ; 7C20  32      2
+    TotalSectorsH   dw  0000            ; 7C22  34      2
+    SectPerFATL     dw  0000            ; 7C24  36      2
+    SectPerFATH     dw  0000            ; 7C26  38      2
+    FAT32Flags      dw  0000            ; 7C28  40      2
+    FSVersion       dw  0000            ; 7C2A  42      2
+    FirstClusterL   dw  0000            ; 7C2C  44      2
+    FirstClusterH   dw  0000            ; 7C2E  46      2
+    FSInfo          dw  0000            ; 7C30  48      2
+    BackupBootSect  dw  0000            ; 7C32  50      2
+    Reserved        db  '            '  ; 7C34  52      12
+    DriveId         db  00              ; 7C40  64      1
+    Reserved1       db  00              ; 7C41  65      1
+    ExtRecordSig    db  00              ; 7C42  66      1
+    VolSerNumL      dw  0000            ; 7C43  67      2
+    VolSerNumH      dw  0000            ; 7C45  69      2
+    VolLabel        db  '           '   ; 7C47  71      11
+    TypeFAT         db  'FAT32   '      ; 7C52  82      8
+                                        ;       90
 ;
 ; So the size of the file should be SECTOR_SIZE - 90.  This will be 422
 ; on a 512 byte/sector hard disk.
@@ -127,7 +125,6 @@ _7C5A:
     ADD     CX, AX
     MOV     AX, BX
     MOV     DX, CX
-
 
     ADD     AX,[NumHiddenSectL]
     ADC     DX,[NumHiddenSectH]
