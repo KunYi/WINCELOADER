@@ -1,0 +1,7 @@
+
+DIRS= \
+    log  \
+    core \
+    iniparser \
+    nldr \
+    xldr
