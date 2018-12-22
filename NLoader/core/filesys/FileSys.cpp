@@ -19,6 +19,7 @@
 #include <fs.h>
 #include <fat16_funcs.h>
 #include <fat32_funcs.h>
+#include <exfat_funcs.h>
 
 // Number of times to retry an IO operation
 #define FLOPPY_IO_RETRIES           4
@@ -67,7 +68,10 @@ int InitializeFileSys (void)
         drv_info.DriveId = pBpbEx->driveId;
 		drv_info.usSectorsPerTrack = pBpb2->sectorsPerTrack;
 		drv_info.usNumHeads = pBpb2->numberOfHeads;
-		DEBUGMSG(ZONE_ERROR, (L"InitializeFileSys:: Found exFAT boot drive.  UNSUPPORTED FILE SYSTEM!!!\r\n"));
+        pFSInit = &ExFAT_FSInit;
+        pOpenFile = &ExFAT_FSOpenFile;
+        pCloseFile = &ExFAT_FSClostFile;
+        pReadFile = &ExFAT_FSReadFile;
 		return -1;
     }
     else if (memcmp(pBpb2->fatType, "FAT32   ", sizeof(pBpb2->fatType)) == 0)

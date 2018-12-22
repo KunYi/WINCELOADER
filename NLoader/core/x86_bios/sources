@@ -20,7 +20,7 @@ RELEASETYPE=PLATFORM
 ASM_SAFESEH=1
 
 #include common settings for core build
-!INCLUDE ..\..\CldrSources.cmn
+!INCLUDE ..\..\NldrSources.cmn
 
 INCLUDES=..\..\inc;$(INCLUDES)
 

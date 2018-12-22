@@ -16,7 +16,7 @@ TARGETTYPE=PROGRAM
 EXEENTRY=StartUp
 
 #include common settings for core build
-!INCLUDE ..\..\CldrSources.cmn
+!INCLUDE ..\..\NldrSources.cmn
 
 !IF "$(_WINCEOSVER)"=="600"
 WINCETARGETFILES=nwceldr
