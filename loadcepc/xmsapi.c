@@ -16,14 +16,14 @@ ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Module Name:  
+Module Name:
 
-Abstract:  
+Abstract:
 
 Functions:
 
 
-Notes: 
+Notes:
 
 --*/
 
@@ -47,12 +47,12 @@ typedef struct  _EXTENDED_MEMORY_MOVE
 
 int (far * XMSControl)() = 0;
 
-struct 
+struct
 {
     int     iErrorCode;
     char *  pszErrorString;
 }
-XmsErrorMessages[] = 
+XmsErrorMessages[] =
 {
     { XMS_SUCCESS, "Success" },
 
@@ -231,6 +231,45 @@ XmsQueryFreeExtendedMemory(
 }
 
 int
+XmsQueryFreeExtendedMemory(
+    unsigned long *pulLargestFreeBlock,
+    unsigned long *pulTotalFree)
+{
+    int xmsError = XMS_SUCCESS;
+
+    if (!XmsIsInstalled())
+    {
+        return XMS_E_NOT_IMPLEMENTED;
+    }
+
+    #define MovEAXtoSIPtr  __asm _emit 0x66 __asm _emit 0x89 __asm _emit 0x04
+    #define MovEDXtoSIPtr  __asm _emit 0x66 __asm _emit 0x89 __asm _emit 0x14
+    _asm
+    {
+        mov     ah, 88h
+        call    [XMSControl]
+
+        push    si
+        mov     si, puiLargestFreeBlock
+        ; mov     DWORD PTR [si], eax
+        MovEAXtoSIPtr
+
+        mov     si, puiTotalFree
+        ; mov     DWORD PTR [si], edx
+        MovEDXtoSIPtr
+
+        pop     si
+
+        xor     bh, bh
+        mov     xmsError, bx
+    }
+    #undef MovEAXtoSIPtr
+    #undef MovEDXtoSIPtr
+
+    return xmsError;
+}
+
+int
 XmsAllocateExtendedMemory(
     unsigned int uiBlockSizeK,
     unsigned int * puiBlockHandle)
@@ -260,6 +299,44 @@ XmsAllocateExtendedMemory(
         xor     bh, bh
         mov     xmsError, bx
     }
+
+done:
+    return xmsError;
+}
+
+int
+XmsAllocateExtendedMemoryEx(
+    unsigned long uiBlockSizeK,
+    unsigned int * puiBlockHandle)
+{
+    int xmsError = XMS_SUCCESS;
+
+    if (!XmsIsInstalled())
+    {
+        return XMS_E_NOT_IMPLEMENTED;
+    }
+
+    #define MovBp4ToEDX __asm _emit 0x66 __asm _emit 0x8B __asm _emit 0x56 __asm _emit 0x04
+    _asm
+    {
+        mov     ah, 89h
+        ;mov     edx, uiBlockSizeK
+        MovBp4ToEDX
+        call    [XMSControl]
+
+        push    si
+        mov     si, puiBlockHandle
+        mov     WORD PTR [si], dx
+        pop     si
+
+        clc
+        rcr     al, 1
+        jc      done
+
+        xor     bh, bh
+        mov     xmsError, bx
+    }
+    #undef MovBp4ToEDX
 
 done:
     return xmsError;

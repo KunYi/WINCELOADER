@@ -841,8 +841,8 @@ static int LoadImage( BOOL     bVerbose,
     int             hImage;
     long            lImageSize;
     int             xmsError;
-    USHORT          usTotalFree;
-    USHORT          usLargestBlock;
+    ULONG           ulTotalFree;
+    ULONG           ulLargestBlock;
     ULONG           ulLinearAddress;
     ULONG           ulSectionAddress;
     ULONG           ulSectionSize;
@@ -868,7 +868,7 @@ static int LoadImage( BOOL     bVerbose,
 
     // Find the largest Extended Memory block and allocate it
 
-    xmsError = XmsQueryFreeExtendedMemory(&usLargestBlock, &usTotalFree);
+    xmsError = XmsQueryFreeExtendedMemoryEx(&ulLargestBlock, &ulTotalFree);
 
     if( xmsError != XMS_SUCCESS )
     { 
@@ -886,13 +886,13 @@ static int LoadImage( BOOL     bVerbose,
     {
         // Print info about memory available
 
-        printf( "Total free extended memory = %u, largest block = %u\n",
-                usTotalFree, usLargestBlock);
+        printf( "Total free extended memory = %lu, largest block = %lu\n",
+                ulTotalFree, ulLargestBlock);
     }
 
     // Allocate the extended block
 
-    xmsError = XmsAllocateExtendedMemory(usLargestBlock, &usBlockHandle);
+    xmsError = XmsAllocateExtendedMemoryEx(ulLargestBlock, &usBlockHandle);
 
     if( xmsError != XMS_SUCCESS )
     {
@@ -941,7 +941,7 @@ static int LoadImage( BOOL     bVerbose,
     // Zero upper memory in CHUNKSIZE chunks
 
     memset(ucBuffer, 0, sizeof(ucBuffer));
-    ulSectionSize = (ULONG)usLargestBlock * 1024;
+    ulSectionSize = ulLargestBlock * 1024;
 
     for( ulSectionOffset = 0; ulSectionOffset < ulSectionSize; ulSectionOffset += usReadSize )
     {
@@ -1177,14 +1177,14 @@ static int LoadImage( BOOL     bVerbose,
 
         if( ulSectionAddress < ulLinearAddress ||
             (ulSectionAddress + ulSectionSize) >
-            (ulLinearAddress + (ULONG)usLargestBlock * 1024) )
+            (ulLinearAddress + ulLargestBlock * 1024) )
         {
             fprintf(stderr, "\r                          \r");
             printf(
                   "Error image section doesn't fit in allocated block\n"
                   "Block allocated at 0x%lX, size = %ld\n"
                   "Section physical start = 0x%8.8lX, size = %ld\n",
-                  ulLinearAddress, (ULONG)usLargestBlock * 1024,
+                  ulLinearAddress, ulLargestBlock * 1024,
                   ulSectionAddress, ulSectionSize);
 
             if( !bParallelDownload && !bSerialDownload )

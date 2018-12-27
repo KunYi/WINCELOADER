@@ -53,8 +53,14 @@ int XmsQueryA20(
 int XmsQueryFreeExtendedMemory(
         unsigned int *puiLargestFreeBlock, unsigned int *puiTotalFree);
 
+int XmsQueryFreeExtendedMemoryEx(
+        unsigned long *pulLargestFreeBlock, unsigned long *pulTotalFree);
+
 int XmsAllocateExtendedMemory(
         unsigned int uiBlockSizeK, unsigned int * puiBlockHandle);
+
+int XmsAllocateExtendedMemoryEx(
+        unsigned long ulBlockSizeK, unsigned int *puiBlockHandle);
 
 int XmsFreeExtendedMemory(
         unsigned int uiBlockHandle);
