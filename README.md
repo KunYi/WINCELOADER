@@ -6,3 +6,4 @@ Collection of WINDOWS CE bootloader
 * CLoader  -- combines biosloader and wecloader feature, clone from [Doug Boling's github](https://github.com/dougboling/CLoader)
 * UEFIloader -- for UEFI platform from Intel WEC7 BSP, the code need EDK2 for compiling
 * NLoader  -- my fork CLoader for improve filesystem support and change bootsect
+* loadcepc -- Microsoft bootloader for DOS 
