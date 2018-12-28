@@ -3,4 +3,4 @@
 @REM
 @ECHO OFF
 
-..\nasm_win32\nasm.exe -o bsect.img bsect.s 
+..\nasm_win32\nasm.exe -o bsect.img -l bsect.lst bsect.s
