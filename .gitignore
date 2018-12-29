@@ -81,3 +81,8 @@ obj
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# MASM/MSVC generation files
+*.lst
+*.cod
+*.bsc

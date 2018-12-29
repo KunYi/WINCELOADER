@@ -231,7 +231,7 @@ XmsQueryFreeExtendedMemory(
 }
 
 int
-XmsQueryFreeExtendedMemory(
+XmsQueryFreeExtendedMemoryEx(
     unsigned long *pulLargestFreeBlock,
     unsigned long *pulTotalFree)
 {
