@@ -56,6 +56,7 @@ BLSTATUS FindClosestVESAMode(BOOT_ARGS * pBootArgs)
 
     ULONG i;
     ULONG ulError;
+	ULONG dX = 0, dY = 0;
     ULONG ulCurrentError = 0xFFFFFFFF;
 
     // Init the signature
@@ -107,9 +108,9 @@ BLSTATUS FindClosestVESAMode(BOOT_ARGS * pBootArgs)
             }
 
             // Compute screen resolution error
-            ulError =
-                (vesaModeInfo.wXResolution - pBootArgs->cxDisplayScreen) +
-                (vesaModeInfo.wYResolution - pBootArgs->cyDisplayScreen);
+			dX = (vesaModeInfo.wXResolution - pBootArgs->cxDisplayScreen);
+			dY = (vesaModeInfo.wYResolution - pBootArgs->cyDisplayScreen);
+            ulError = (dX * dX) + (dY * dY);
 
             // If the error is diminishing save the mode data
             if (ulError < ulCurrentError)
