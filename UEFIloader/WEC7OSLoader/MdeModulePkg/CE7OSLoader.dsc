@@ -24,6 +24,7 @@
   SKUID_IDENTIFIER               = DEFAULT
 
 [LibraryClasses]
+  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
